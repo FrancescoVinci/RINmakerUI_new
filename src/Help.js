@@ -65,7 +65,7 @@ export default function Help() {
                         <hr />
 
 
-                        <p><b>RINmaker</b> is a software tool that receives in input a protein structure (in <i>pdb</i> or <i>mmCIF</i> format) and creates the corresponding <b>RIN</b> (<i>Residue Interaction Network</i>) where nodes are amino acids and edges represent the non-covalent interactions.</p>
+                        <b>RINmaker</b> is a software tool that receives in input a protein structure (in <i>pdb</i> or <i>mmCIF</i> format) and creates the corresponding <b>RIN</b> (<i>Residue Interaction Network</i>) where nodes are amino acids and edges represent the non-covalent interactions.
 
                         <h1>Usage</h1>
                         <hr />
@@ -89,30 +89,30 @@ export default function Help() {
 
                         <p>Here follows the list of types and default values of the input parameters:</p>
 
-                        <p style={{ color: "#7828C8", fontSize: 20, fontFamily: "Source Code Pro" }}><b>options</b></p>
+                        <p className="code" style={{ color: "#7828C8", fontSize: 20 }}><b>options</b></p>
 
                         <Table striped>
                             <tbody>
                                 <tr>
-                                    <td><p style={{ fontFamily: "Source Code Pro" }}><b>-n, --no-hydrogen</b></p></td>
+                                    <td><p className="code"><b>-n, --no-hydrogen</b></p></td>
                                     <td>boolean</td>
                                     <td>Skip hydrogen fixing</td>
 
                                 </tr>
                                 <tr>
-                                    <td><p style={{ fontFamily: "Source Code Pro" }}><b>-w, --keep-water</b></p></td>
+                                    <td><p className="code"><b>-w, --keep-water</b></p></td>
                                     <td>boolean</td>
                                     <td>Keep water residues</td>
 
                                 </tr>
                                 <tr>
-                                    <td><p style={{ fontFamily: "Source Code Pro" }}><b>-s,--sequence-separation</b></p></td>
+                                    <td><p className="code"><b>-s,--sequence-separation</b></p></td>
                                     <td>INT:POSITIVE=3</td>
                                     <td>Minimum sequence separation</td>
 
                                 </tr>
                                 <tr>
-                                    <td><p style={{ fontFamily: "Source Code Pro" }}><b>--illformed</b></p></td>
+                                    <td><p className="code"><b>--illformed</b></p></td>
                                     <td>ENUM:&#123;fail,kall,kres,sres&#125;=sres</td>
                                     <td>Behaviour in case of malformed ring or ionic group</td>
 
@@ -128,61 +128,61 @@ export default function Help() {
                         <Table striped>
                             <tbody>
                                 <tr>
-                                    <td><p style={{ fontFamily: "Source Code Pro" }}><b>--policy</b></p></td>
+                                    <td><p className="code"><b>--policy</b></p></td>
                                     <td>ENUM:&#123;all,multiple,one&#125;=all</td>
                                     <td>Affects which edges are kept per pair of aminoacids</td>
 
                                 </tr>
                                 <tr>
-                                    <td><p style={{ fontFamily: "Source Code Pro" }}><b>--hydrogen-bond</b></p></td>
+                                    <td><p className="code"><b>--hydrogen-bond</b></p></td>
                                     <td>FLOAT:POSITIVE=3.5</td>
                                     <td>Query distance for hydrogen bonds</td>
 
                                 </tr>
                                 <tr>
-                                    <td><p style={{ fontFamily: "Source Code Pro" }}><b>--vdw-bond</b></p></td>
+                                    <td><p className="code"><b>--vdw-bond</b></p></td>
                                     <td>FLOAT=0.5</td>
                                     <td>Surface distance for vdw bonds</td>
 
                                 </tr>
                                 <tr>
-                                    <td><p style={{ fontFamily: "Source Code Pro" }}><b>--ionic-bond</b></p></td>
+                                    <td><p className="code"><b>--ionic-bond</b></p></td>
                                     <td>FLOAT:POSITIVE=4</td>
                                     <td>Query distance for ionic bonds</td>
 
                                 </tr>
                                 <tr>
-                                    <td><p style={{ fontFamily: "Source Code Pro" }}><b>--pication-bond</b></p></td>
+                                    <td><p className="code"><b>--pication-bond</b></p></td>
                                     <td>FLOAT:POSITIVE=5</td>
                                     <td>Query distance for cation-pi bonds</td>
 
                                 </tr>
                                 <tr>
-                                    <td><p style={{ fontFamily: "Source Code Pro" }}><b>--pipistack-bond</b></p></td>
+                                    <td><p className="code"><b>--pipistack-bond</b></p></td>
                                     <td>FLOAT:POSITIVE=6.5</td>
                                     <td>Query distance for pi-pi stackings</td>
 
                                 </tr>
                                 <tr>
-                                    <td><p style={{ fontFamily: "Source Code Pro" }}><b>--h-bond-angle</b></p></td>
+                                    <td><p className="code"><b>--h-bond-angle</b></p></td>
                                     <td>FLOAT:POSITIVE=63</td>
                                     <td>Angle for hydrogen bonds</td>
 
                                 </tr>
                                 <tr>
-                                    <td><p style={{ fontFamily: "Source Code Pro" }}><b>--pication-angle</b></p></td>
+                                    <td><p className="code"><b>--pication-angle</b></p></td>
                                     <td>FLOAT:POSITIVE=45</td>
                                     <td>Angle for cation-pi bonds</td>
 
                                 </tr>
                                 <tr>
-                                    <td><p style={{ fontFamily: "Source Code Pro" }}><b>--pipistack-normal-normal</b></p></td>
+                                    <td><p className="code"><b>--pipistack-normal-normal</b></p></td>
                                     <td>FLOAT:POSITIVE=30</td>
                                     <td>Angle range from normal to normal for pi-pi stackings</td>
 
                                 </tr>
                                 <tr>
-                                    <td><p style={{ fontFamily: "Source Code Pro" }}><b>--pipistack-normal-centre</b></p></td>
+                                    <td><p className="code"><b>--pipistack-normal-centre</b></p></td>
                                     <td>FLOAT:POSITIVE=60</td>
                                     <td>Angle range from normal to centre for pi-pi stackings</td>
                                 </tr>
@@ -197,13 +197,13 @@ export default function Help() {
                         <Table striped>
                             <tbody>
                                 <tr>
-                                    <td><p style={{ fontFamily: "Source Code Pro" }}><b>--type</b></p></td>
+                                    <td><p className="code"><b>--type</b></p></td>
                                     <td>ENUM:&#123;ca,cb&#125;=ca</td>
                                     <td>Type of contact map (alpha/beta carbon)</td>
 
                                 </tr>
                                 <tr>
-                                    <td><p style={{ fontFamily: "Source Code Pro" }}><b>--distance</b></p></td>
+                                    <td><p className="code"><b>--distance</b></p></td>
                                     <td>FLOAT:POSITIVE=6</td>
                                     <td>Query distance between alpha/beta carbons</td>
 

@@ -10,19 +10,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-range-slider-input/dist/style.css';
 
+import './cssfile.css';
+
 import Home from './Home';
 import Help from './Help';
 import About from './About';
 import Rin2D from "./Rin2D";
-
-const theme = createTheme({
-  type: 'light',
-  theme: {
-    fonts: {
-      sans: 'Segoe UI',
-    },
-  },
-});
 
 const router = createBrowserRouter([
   {
@@ -47,7 +40,7 @@ const router = createBrowserRouter([
 const root = document.getElementById('root');
 ReactDOM.render(
   <StrictMode>
-    <NextUIProvider theme={theme}>
+    <NextUIProvider>
       <RouterProvider router={router} />
     </NextUIProvider>
   </StrictMode>,

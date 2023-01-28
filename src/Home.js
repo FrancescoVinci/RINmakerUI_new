@@ -751,7 +751,7 @@ export default function Home() {
                   <option value="kres">kres</option>
                   <option value="sres">sres</option>
                 </Form.Select>
-                <Form.Text muted>
+                <Form.Text style={{fontFamily: "sans-serif"}} muted>
                   Behaviour in case of malformed ring or ionic group.
                   Default: sres
                 </Form.Text>
@@ -799,7 +799,7 @@ export default function Home() {
                   checked={rinSwitch}
                   onChange={e => switchChange()}
                 />
-                <p style={{ color: "#7828C8", fontSize: 25, fontFamily: "Source Code Pro" }}><b>rin</b></p>
+                <Form.Text className="code" style={{ color: "#7828C8", fontSize: 25 }}><b>rin</b></Form.Text>
               </Stack>
               <Form.Text muted>
                 Compute the residue interaction network
@@ -957,7 +957,7 @@ export default function Home() {
                   checked={cmapSwitch}
                   onChange={e => switchChange()}
                 />
-                <p style={{ color: "#7828C8", fontSize: 25, fontFamily: "Source Code Pro" }}><b>cmap</b></p>
+                <p className="code" style={{ color: "#7828C8", fontSize: 25 }}><b>cmap</b></p>
               </Stack>
               <Form.Text muted>
                 Compute the contact map of the protein
