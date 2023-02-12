@@ -1,5 +1,5 @@
 import { Text } from "@nextui-org/react";
-import { Modal, Button, Container } from "react-bootstrap";
+import { Modal, Container } from "react-bootstrap";
 
 export default function ModalParams(props) {
 

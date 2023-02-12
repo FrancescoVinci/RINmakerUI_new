@@ -1,17 +1,18 @@
-import { Navbar, Text, Button, Spacer, Tooltip, Card, Progress } from "@nextui-org/react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Navbar, Text, Button, Spacer, Tooltip, Card } from "@nextui-org/react";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 
 import { BsDownload, BsBadge3D } from "react-icons/bs";
 import { IoIosStats } from "react-icons/io";
 import { AiFillHome } from "react-icons/ai";
-import { BiCodeCurly } from "react-icons/bi";
+import { BiCodeCurly, BiNetworkChart } from "react-icons/bi";
 import { TfiPanel } from "react-icons/tfi";
 import { Container, Form, Row } from "react-bootstrap";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 
 import ForceGraph2D from "react-force-graph-2d";
+import ForceGraph3D from "react-force-graph-3d";
 import SvgNodeResidue from "./components/SvgNodeResidue";
 import SvgNodeChain from "./components/SvgNodeChain";
 import SvgNodeDegree from "./components/SvgNodeDegree";
@@ -27,12 +28,7 @@ export default function Rin2D() {
     const navigate = useNavigate();
     const fgRef = useRef();
 
-    // TODO: se location è vuoto redirect alla pagina principale
-
-    const graphData = location.state.gData;
-    const pdbname = location.state.pdbname;
-
-    const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
+    const [displayWidth, setDisplayWidth] = useState(window.innerWidth - 400);
     const [displayHeight, setDisplayHeight] = useState(window.innerHeight);
 
     const [modalParams, setModalParams] = useState(false);
@@ -50,14 +46,47 @@ export default function Rin2D() {
     const [pipistack, setPipistack] = useState(true);
     const [ssbond, setSsbond] = useState(true);
     const [ionic, setIonic] = useState(true);
-    const [iac, setIac] = useState(true);
+    const [hydrophobic, setHydrophobic] = useState(true);
     const [pication, setPication] = useState(true);
+    const [generic, setGeneric] = useState(true);
+    const [graphType, setGraphType] = useState(location?.state?.graphType ?? "");
+
+
+    useLayoutEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location.pathname]);
+
+    if (location.state === null) {
+        return <Navigate to="/" />;
+    }
+
+
+    const graphData = location.state.gData;
+    const pdbname = location.state.pdbname;
+    const xml = location.state.xml;
 
 
     window.addEventListener("resize", () => {
-        setDisplayWidth(window.innerWidth);
-        setDisplayHeight(window.innerHeight);
+
+        if (!showPanel) {
+            setDisplayWidth(window.innerWidth - 100);
+            setDisplayHeight(window.innerHeight);
+        } else {
+            setDisplayWidth(window.innerWidth - 400);
+            setDisplayHeight(window.innerHeight);
+        }
     });
+
+    const showControlPanel = (e) => {
+        if (e === false) {
+            setShowPanel(e);
+            setDisplayWidth(window.innerWidth - 100);
+        } else {
+            setShowPanel(e);
+            setDisplayWidth(window.innerWidth - 400);
+        }
+
+    }
 
     const onChangeDistance = (e) => {
         setDistValue(e.target.value);
@@ -65,11 +94,11 @@ export default function Rin2D() {
         fgRef.current.d3ReheatSimulation();
     }
 
-    const onChangeGravity = useCallback((e) => {
+    const onChangeGravity = (e) => {
         setGravityValue(e.target.value);
         fgRef.current.d3Force("charge").strength(gravityValue);
         fgRef.current.d3ReheatSimulation();
-    }, [gravityValue]);
+    }
 
 
     const onNodeColorChange = (e) => {
@@ -77,10 +106,30 @@ export default function Rin2D() {
 
     }
 
+    const downloadXML = () => {
+        const url = window.URL.createObjectURL(
+            new Blob([xml]),
+        );
+
+        const link = document.createElement('a');
+
+        link.href = url;
+        link.setAttribute(
+            'download',
+            `${pdbname}.xml`,
+        );
+
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+    }
+
+    const changeRin = (rin) => {
+        setGraphType(rin);
+    }
 
     return (
         <>
-
             <ModalParams
                 log={location.state.log}
                 params={location.state.params}
@@ -88,15 +137,17 @@ export default function Rin2D() {
                 onHide={() => setModalParams(false)} />
 
             <ModalChart
-                res_count = {location.state.res_count}
-                bond_count = {location.state.bond_count}
-                avg_e_bond = {location.state.avg_e_bond}
-                avg_dist_bond = {location.state.avg_dist_bond}
-                hbond_ext_count = {location.state.hbond_ext_count}
-                num_nodes = {location.state.num_nodes}
-                num_links = {location.state.num_links}
-                show = {modalChart}
-                onHide = {() => setModalChart(false)} />
+                pdbname={pdbname}
+                log={location.state.log}
+                res_count={[...location.state.res_count]}
+                bond_count={[...location.state.bond_count]}
+                avg_e_bond={[...location.state.avg_e_bond]}
+                avg_dist_bond={[...location.state.avg_dist_bond]}
+                hbond_ext_count={[...location.state.hbond_ext_count]}
+                num_nodes={location.state.num_nodes}
+                num_links={location.state.num_links}
+                show={modalChart}
+                onHide={() => setModalChart(false)} />
 
 
             <div css={{ maxW: "100%", boxSizing: "border-box" }}>
@@ -115,7 +166,7 @@ export default function Rin2D() {
                             {pdbname}
                         </Text>
                         <Tooltip placement="bottom" content={"Download XML"}>
-                            <Button rounded flat color="secondary" icon={<BsDownload size={19} />} auto />
+                            <Button rounded flat color="secondary" icon={<BsDownload size={19} />} onPress={downloadXML} auto />
                         </Tooltip>
                     </Navbar.Brand>
 
@@ -123,9 +174,18 @@ export default function Rin2D() {
 
                     <Navbar.Content activeColor={"secondary"} hideIn="xs" variant="highlight-rounded">
 
-                        <Tooltip placement="bottom" content={"3D Vizualization"}>
-                            <Button rounded flat color="secondary" icon={<BsBadge3D size={19} />} auto />
-                        </Tooltip>
+
+                        {graphType == "2d_rin"
+                            ?
+                            <Tooltip placement="bottom" content={"3D Vizualization"}>
+                                <Button rounded flat color="secondary" icon={<BsBadge3D size={19} />} onPress={() => changeRin("3d_rin")} auto />
+                            </Tooltip>
+                            :
+                            <Tooltip placement="bottom" content={"2D Vizualization"}>
+                                <Button rounded flat color="secondary" icon={<BiNetworkChart size={19} />} onPress={() => changeRin("2d_rin")} auto />
+                            </Tooltip>
+                        }
+
 
                         <Spacer x={0.5} />
 
@@ -142,12 +202,11 @@ export default function Rin2D() {
                         <Spacer x={0.5} />
 
 
-                        <Button onClick={() => navigate("/")} rounded flat color="secondary" icon={<AiFillHome size={19} />} auto />
+                        <Button onClick={() => navigate("/home")} rounded flat color="secondary" icon={<AiFillHome size={19} />} auto />
 
                     </Navbar.Content>
 
                 </Navbar>
-
 
 
                 <div className="d-flex m-4">
@@ -158,7 +217,7 @@ export default function Rin2D() {
 
                                 <Row className="mx-auto">
                                     <Tooltip className="align-items-center" placement="bottom" content={"Show/hide side panel"}>
-                                        <Button rounded flat onClick={() => setShowPanel(!showPanel)} color="secondary" icon={<TfiPanel size={19} />} auto />
+                                        <Button rounded flat onClick={() => showControlPanel(!showPanel)} color="secondary" icon={<TfiPanel size={19} />} auto />
                                     </Tooltip>
                                 </Row>
 
@@ -188,6 +247,7 @@ export default function Rin2D() {
 
                                 <hr style={{ color: "#9750DD" }} />
 
+
                                 <Form.Label><p style={{ color: "#9750DD" }}><b>Distance:</b></p></Form.Label>
                                 <input
                                     type="range"
@@ -203,7 +263,6 @@ export default function Rin2D() {
                                 <hr style={{ color: "#9750DD" }} />
 
                                 <div><p style={{ color: "#9750DD" }}><b>Edge types:</b></p></div>
-
 
                                 <div className="row">
                                     <div className="col-sm">
@@ -285,13 +344,13 @@ export default function Rin2D() {
                                             <Checkbox
                                                 size="small"
                                                 style={{
-                                                    color: "gainsboro",
+                                                    color: "#FFA07A",
                                                 }}
-                                                checked={iac}
-                                                onChange={() => setIac(!iac)}
+                                                checked={hydrophobic}
+                                                onChange={() => setHydrophobic(!hydrophobic)}
                                             />
                                         }
-                                            label={<div style={{ fontSize: "13px" }}>IAC</div>} />
+                                            label={<div style={{ fontSize: "13px" }}>Hydrophobic</div>} />
                                     </div>
                                 </div>
                                 <div className="row">
@@ -307,6 +366,22 @@ export default function Rin2D() {
                                             />
                                         }
                                             label={<div style={{ fontSize: "13px" }}>π-Cation</div>} />
+
+
+                                    </div>
+
+                                    <div className="col-sm">
+                                        <FormControlLabel control={
+                                            <Checkbox
+                                                size="small"
+                                                style={{
+                                                    color: "#615f5f",
+                                                }}
+                                                checked={generic}
+                                                onChange={() => setGeneric(!generic)}
+                                            />
+                                        }
+                                            label={<div style={{ fontSize: "13px" }}>Generic</div>} />
 
 
                                     </div>
@@ -346,96 +421,201 @@ export default function Rin2D() {
                         :
                         <div>
                             <Tooltip placement="right" content={"Show/hide side panel"}>
-                                <Button rounded flat onClick={() => setShowPanel(!showPanel)} color="secondary" icon={<TfiPanel size={19} />} auto />
+                                <Button rounded flat onClick={() => showControlPanel(!showPanel)} color="secondary" icon={<TfiPanel size={19} />} auto />
                             </Tooltip>
                         </div>
                     }
 
-                    <ForceGraph2D
-                        ref={fgRef}
-                        width={displayWidth}
-                        height={displayHeight}
-                        graphData={graphData}
-                        nodeLabel={node => "ID : " + node.id + "<br>Res name : " + node.residue + "<br>Chain id : " + node.chain + "<br>Degree : " + node.degree}
-                        linkLabel={edge => "BOND : " + edge.interaction + "<br>Atom 1 : " + edge.a1 + "<br>Atom 2 : " + edge.a2 + "<br>Distance : " + edge.distance + "<br>Energy : " + edge.energy + " kj/mol" + "<br>source : " + edge.source.id + "<br>target : " + edge.target.id}
-                        nodeColor={nodeColor}
-                        nodeVal={node => node.degree}
-                        linkColor={"color_type"}
-                        linkWidth={1}
-                        linkCurvature={"curvature"}
-                        nodeRelSize={2}
-                        backgroundColor={"#FFFFFF"}
-                        onNodeDragEnd={node => {
-                            node.fx = node.x;
-                            node.fy = node.y;
-                        }}
-                        warmupTicks={100}
-                        autoPauseRedraw={false}
-                        cooldownTime={3000}
+                    {graphType == "2d_rin"
+                        ?
+                        <ForceGraph2D
+                            ref={fgRef}
+                            width={displayWidth}
+                            height={displayHeight}
+                            graphData={graphData}
+                            nodeLabel={node => "ID : " + node.id + "<br>Res name : " + node.residue + "<br>Chain id : " + node.chain + "<br>Degree : " + node.degree}
+                            linkLabel={edge => "BOND : " + edge.interaction + "<br>Atom 1 : " + edge.a1 + "<br>Atom 2 : " + edge.a2 + "<br>Distance : " + edge.distance + "<br>Energy : " + edge.energy + " kj/mol" + "<br>source : " + edge.source.id + "<br>target : " + edge.target.id}
+                            nodeColor={nodeColor}
+                            nodeVal={node => node.degree}
+                            linkColor={"color_type"}
+                            linkWidth={1}
+                            linkCurvature={"curvature"}
+                            nodeRelSize={2}
+                            backgroundColor={"#FFFFFF"}
+                            onNodeDragEnd={node => {
+                                node.fx = node.x;
+                                node.fy = node.y;
+                            }}
+                            warmupTicks={100}
+                            autoPauseRedraw={false}
+                            cooldownTime={3000}
 
-                        d3AlphaDecay={0.02}
-                        d3VelocityDecay={0.7}
-                        enableZoomPanInteraction={true}
-                        linkVisibility={(link) => {
+                            d3AlphaDecay={0.02}
+                            d3VelocityDecay={0.7}
+                            enableZoomPanInteraction={true}
+                            linkVisibility={(link) => {
 
-                            if (link.interaction.includes("VDW")) {
-                                if (!vanDerWaals) {
-                                    return false;
-                                } else if (vanDerWaals) {
-                                    return true;
+                                if (link.interaction.includes("VDW")) {
+                                    if (!vanDerWaals) {
+                                        return false;
+                                    } else if (vanDerWaals) {
+                                        return true;
+                                    }
                                 }
-                            }
 
-                            if (link.interaction.includes("HBOND")) {
-                                if (!hbond) {
-                                    return false;
-                                } else if (hbond) {
-                                    return true;
+                                if (link.interaction.includes("HBOND")) {
+                                    if (!hbond) {
+                                        return false;
+                                    } else if (hbond) {
+                                        return true;
+                                    }
                                 }
-                            }
 
-                            if (link.interaction.includes("PIPISTACK")) {
-                                if (!pipistack) {
-                                    return false;
-                                } else if (pipistack) {
-                                    return true;
+                                if (link.interaction.includes("PIPISTACK")) {
+                                    if (!pipistack) {
+                                        return false;
+                                    } else if (pipistack) {
+                                        return true;
+                                    }
                                 }
-                            }
 
-                            if (link.interaction.includes("SSBOND")) {
-                                if (!ssbond) {
-                                    return false;
-                                } else if (ssbond) {
-                                    return true;
+                                if (link.interaction.includes("SSBOND")) {
+                                    if (!ssbond) {
+                                        return false;
+                                    } else if (ssbond) {
+                                        return true;
+                                    }
                                 }
-                            }
 
-                            if (link.interaction.includes("IONIC")) {
-                                if (!ionic) {
-                                    return false;
-                                } else if (ionic) {
-                                    return true;
+                                if (link.interaction.includes("IONIC")) {
+                                    if (!ionic) {
+                                        return false;
+                                    } else if (ionic) {
+                                        return true;
+                                    }
                                 }
-                            }
 
-                            if (link.interaction.includes("IAC")) {
-                                if (!iac) {
-                                    return false;
-                                } else if (iac) {
-                                    return true;
+                                if (link.interaction.includes("PICATION")) {
+                                    if (!pication) {
+                                        return false;
+                                    } else if (pication) {
+                                        return true;
+                                    }
                                 }
-                            }
 
-                            if (link.interaction.includes("PICATION")) {
-                                if (!pication) {
-                                    return false;
-                                } else if (pication) {
-                                    return true;
+                                if (link.interaction.includes("HYDROPHOBIC")) {
+                                    if (!hydrophobic) {
+                                        return false;
+                                    } else if (hydrophobic) {
+                                        return true;
+                                    }
                                 }
-                            }
-                        }}
-                    />
 
+                                if (link.interaction.includes("GENERIC")) {
+                                    if (!generic) {
+                                        return false;
+                                    } else if (generic) {
+                                        return true;
+                                    }
+                                }
+                            }}
+                        />
+                        :
+                        <ForceGraph3D
+                            ref={fgRef}
+                            width={displayWidth}
+                            height={displayHeight}
+                            graphData={graphData}
+                            nodeLabel={node => `<span style="color: black"> ID : ${node.id} <br>Res name : ${node.residue} <br>Chain id : ${node.chain} <br>Degree : ${node.degree}</span>`}
+                            linkLabel={edge => `<span style="color: black"> BOND : ${edge.interaction} <br>Atom 1 : ${edge.a1} <br>Atom 2 : ${edge.a2} <br>Distance : ${edge.distance} <br>Energy : ${edge.energy} kj/mol</span>`}
+                            nodeColor={nodeColor}
+                            nodeVal={node => node.degree}
+                            linkColor={"color_type"}
+                            nodeOpacity={0.75}
+                            linkOpacity={0.6}
+                            linkWidth={1.5}
+                            linkCurvature={edge => edge.curvature * (-2)} //aumento la curvatura nella versione 3D per distinguere meglio i legami 
+                            nodeRelSize={2}
+                            backgroundColor={"#FFFFFF"}
+                            onNodeDragEnd={node => {
+                                node.fx = node.x;
+                                node.fy = node.y;
+                                node.fz = node.z;
+                            }}
+                            warmupTicks={100}
+                            cooldownTime={3000}
+
+                            d3AlphaDecay={0.02}
+                            d3VelocityDecay={0.7}
+                            enableZoomPanInteraction={true}
+                            linkVisibility={(link) => {
+
+                                if (link.interaction.includes("VDW")) {
+                                    if (!vanDerWaals) {
+                                        return false;
+                                    } else if (vanDerWaals) {
+                                        return true;
+                                    }
+                                }
+
+                                if (link.interaction.includes("HBOND")) {
+                                    if (!hbond) {
+                                        return false;
+                                    } else if (hbond) {
+                                        return true;
+                                    }
+                                }
+
+                                if (link.interaction.includes("PIPISTACK")) {
+                                    if (!pipistack) {
+                                        return false;
+                                    } else if (pipistack) {
+                                        return true;
+                                    }
+                                }
+
+                                if (link.interaction.includes("SSBOND")) {
+                                    if (!ssbond) {
+                                        return false;
+                                    } else if (ssbond) {
+                                        return true;
+                                    }
+                                }
+
+                                if (link.interaction.includes("IONIC")) {
+                                    if (!ionic) {
+                                        return false;
+                                    } else if (ionic) {
+                                        return true;
+                                    }
+                                }
+
+                                if (link.interaction.includes("PICATION")) {
+                                    if (!pication) {
+                                        return false;
+                                    } else if (pication) {
+                                        return true;
+                                    }
+                                }
+
+                                if (link.interaction.includes("HYDROPHOBIC")) {
+                                    if (!hydrophobic) {
+                                        return false;
+                                    } else if (hydrophobic) {
+                                        return true;
+                                    }
+                                }
+
+                                if (link.interaction.includes("GENERIC")) {
+                                    if (!generic) {
+                                        return false;
+                                    } else if (generic) {
+                                        return true;
+                                    }
+                                }
+                            }}
+                        />
+                    }
                 </div>
 
 

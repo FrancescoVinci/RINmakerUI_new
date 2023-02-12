@@ -1,9 +1,9 @@
-import { Navbar, Button, Text, Image, Badge, Grid, Spacer, Progress } from "@nextui-org/react";
+import { Button, Badge, Grid, Spacer, Progress } from "@nextui-org/react";
 import { BsListCheck, BsFillTagFill, BsKeyboard, BsGithub } from 'react-icons/bs';
 import { Card, Col, Row, Stack, Container, Form } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useLayoutEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { nodesRIN, linksRIN, parseXmlBonds, res_count, bond_count, avg_e_bond, avg_dist_bond, hbond_ext_count } from "./functions/Parsing";
 
@@ -41,6 +41,11 @@ export default function Home() {
   const [logContent, setLogContent] = useState("")
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   const switchChange = (e) => {
     setRinSwitch(!rinSwitch);
@@ -242,8 +247,8 @@ export default function Home() {
         }
 
         if (hydrogenBondAngle != "") {
-          if (isPositiveNum(hydrogenBond)) {
-            params.hydrogen_bond_angle = hydrogenBondAngle;
+          if (isPositiveNum(hydrogenBondAngle)) {
+            params.h_bond_angle = hydrogenBondAngle;
           } else {
             return toast.warn('Please insert a valid value for Hydrogen bond angle', {
               position: "bottom-right",
@@ -339,7 +344,7 @@ export default function Home() {
       if (e.target.name === "generate_xml") {
         setLoading(true);
         if (isFile) {
-          fetch("http://localhost:8002/api/requestxml/fromcontent", {
+          fetch("https://rinmaker.dais.unive.it:8002/api/requestxml/fromcontent", {
             method: "POST",
             headers: {
               'Content-Type': 'application/json'
@@ -419,7 +424,7 @@ export default function Home() {
         } else {
 
           setLoading(true);
-          fetch("http://localhost:8002/api/requestxml/fromname", {
+          fetch("https://rinmaker.dais.unive.it:8002/api/requestxml/fromname", {
             method: "POST",
             headers: {
               'Content-Type': 'application/json'
@@ -507,14 +512,14 @@ export default function Home() {
               }
             })
         }
-      } else if (e.target.name === "2d_rin") {
+      } else if (e.target.name === "2d_rin" || e.target.name === "3d_rin") {
 
         setLoading(true);
         let url;
         if (isFile) {
-          url = "http://localhost:8002/api/requestxml/fromcontent";
+          url = "https://rinmaker.dais.unive.it:8002/api/requestxml/fromcontent";
         } else {
-          url = "http://localhost:8002/api/requestxml/fromname";
+          url = "https://rinmaker.dais.unive.it:8002/api/requestxml/fromname";
         }
 
         try {
@@ -583,10 +588,12 @@ export default function Home() {
             };
 
             const state = {
+              graphType: e.target.name,
               gData: gData,
               pdbname: params.pdbname,
               log: log,
               params: params,
+              xml: xml,
               res_count: res_count,
               bond_count: bond_count,
               avg_e_bond: avg_e_bond,
@@ -598,7 +605,7 @@ export default function Home() {
             }
 
             setLoading(false);
-            navigate("/Rin2D", { state: state });
+            navigate("/rin", { state: state });
 
           }
         } catch (error) {
@@ -617,16 +624,14 @@ export default function Home() {
           }
         }
 
-        
-      } else if (e.target.name === "3d_rin") {
-        navigate("/Rin3D", { params: params });
+
       }
     }
   }
 
 
   return (
-    <div style={{ boxSizing: "border-box" }}>
+    <>
 
       <ToastContainer
         position="bottom-right"
@@ -641,31 +646,6 @@ export default function Home() {
         theme="colored"
       />
 
-      <Navbar css={{ $$navbarBlurBackgroundColor: "#F1E8FB" }} variant="floating">
-        <Navbar.Brand>
-          <Image css={{ p: 5 }} objectFit="cover" width={50} src="img/navicon.png" />
-          <Text
-            h1
-            size={35}
-            css={{
-              p: 10,
-              textGradient: "45deg, $blue600 -20%, $purple600 70%",
-            }}
-            weight="bold"
-          >
-            RINmaker
-          </Text>
-        </Navbar.Brand>
-
-        <Navbar.Content activeColor={"secondary"} hideIn="xs" variant="highlight-rounded">
-          <Navbar.Link isActive href="/">Home</Navbar.Link>
-          <Navbar.Link href="/Help">Help</Navbar.Link>
-          <Navbar.Link href="/About">About</Navbar.Link>
-
-        </Navbar.Content>
-
-      </Navbar>
-
       <Container>
         <Spacer y={1}></Spacer>
 
@@ -677,7 +657,7 @@ export default function Home() {
             <Badge enableShadow disableOutline color="success"><BsFillTagFill />&nbsp;v0.1.3</Badge>
           </Grid>
           <Grid>
-            <Badge enableShadow disableOutline css={{ cursor: "pointer"}} color="secondary"><BsGithub /><a style={{color:"white"}} href="https://github.com/RINmaker" target="_blank">&nbsp;RINmaker</a></Badge>
+            <Badge enableShadow disableOutline css={{ cursor: "pointer" }} color="secondary"><BsGithub /><a style={{ textDecoration: 'none', color: "white" }} href="https://github.com/RINmaker" target="_blank">&nbsp;RINmaker</a></Badge>
           </Grid>
         </Grid.Container>
 
@@ -726,7 +706,7 @@ export default function Home() {
             </Row>
             <hr />
             <Row>
-              <i>ångström (Å) = 0.1 nanometers = 1-10 meters</i>
+              <i>ångström (Å) = 0.1 nanometers = 1<sup>-10</sup> meters</i>
             </Row>
             <br />
             <Row>
@@ -746,14 +726,13 @@ export default function Home() {
               <Col>
                 <Form.Label><mark>illformed</mark></Form.Label>
                 <Form.Select id="illformed" name="illformed" defaultValue={"sres"} onChange={e => setIllformed(e.currentTarget.value)}>
-                  <option value="fail">fail</option>
-                  <option value="kall">kall</option>
-                  <option value="kres">kres</option>
-                  <option value="sres">sres</option>
+                  <option value="kall">keep all</option>
+                  <option value="kres">keep residue</option>
+                  <option value="sres">skip residue</option>
                 </Form.Select>
-                <Form.Text style={{fontFamily: "sans-serif"}} muted>
+                <Form.Text muted>
                   Behaviour in case of malformed ring or ionic group.
-                  Default: sres
+                  Default: skip residue
                 </Form.Text>
               </Col>
             </Row>
@@ -799,7 +778,7 @@ export default function Home() {
                   checked={rinSwitch}
                   onChange={e => switchChange()}
                 />
-                <Form.Text className="code" style={{ color: "#7828C8", fontSize: 25 }}><b>rin</b></Form.Text>
+                <p className="code" style={{ color: "#7828C8", fontSize: 25 }}><b>rin</b></p>
               </Stack>
               <Form.Text muted>
                 Compute the residue interaction network
@@ -968,12 +947,12 @@ export default function Home() {
               <Col sm={6}>
                 <Form.Label><mark>Type</mark></Form.Label>
                 <Form.Select id="type" name="type" defaultValue={"ca"} onChange={e => setType(e.currentTarget.value)}>
-                  <option value="ca">ca</option>
-                  <option value="cb">cb</option>
+                  <option value="ca">alpha carbon</option>
+                  <option value="cb">beta carbon</option>
                 </Form.Select>
                 <Form.Text muted>
                   Type of contact map (alpha/beta carbon).
-                  Default: ca
+                  Default: alpha carbon
                 </Form.Text>
               </Col>
               <Col sm={6}>
@@ -1036,21 +1015,17 @@ export default function Home() {
             }
 
           </Card.Body>
-
           {logContent &&
             <Card>
-              <Card.Header style={{ color: "#7828C8", fontSize: 20, fontFamily: "Source Code Pro" }}><b>Log</b></Card.Header>
+              <Card.Header className="code" style={{ color: "#7828C8", fontSize: 20 }}><b>Log</b></Card.Header>
               <Card.Body>
                 <pre>{logContent}</pre>
 
               </Card.Body>
             </Card>
           }
-
         </Card>
-
       </Container>
-
-    </div>
+    </>
   )
 }

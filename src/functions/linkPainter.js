@@ -69,8 +69,14 @@ function paintLink_type(interaction_type){
     if ((interaction_type).includes('PICATION')){
         return "#9acd32"
     }
-    if ((interaction_type).includes('IAC')){
+    if ((interaction_type).includes('IAC')){ // legacy
         return "#dcdcdc"
+    }
+    if ((interaction_type).includes('GENERIC')){ //per cmap
+        return "#615f5f" //colore
+    }
+    if ((interaction_type).includes('HYDROPHOBIC')){ //rin
+        return "#FFA07A" //colore
     }
     else{
         //NOBOND
