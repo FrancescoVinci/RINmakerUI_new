@@ -10,6 +10,7 @@ import { BiCodeCurly, BiNetworkChart } from "react-icons/bi";
 import { TfiPanel } from "react-icons/tfi";
 import { Container, Form, Row } from "react-bootstrap";
 import { useState, useRef, useLayoutEffect } from "react";
+import { install } from "resize-observer";
 
 import ForceGraph2D from "react-force-graph-2d";
 import ForceGraph3D from "react-force-graph-3d";
@@ -23,6 +24,8 @@ import ModalChart from "./components/ModalChart"
 
 
 export default function Rin2D() {
+
+    if (!window.ResizeObserver) install();
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -165,15 +168,18 @@ export default function Rin2D() {
                         >
                             {pdbname}
                         </Text>
-                        <Tooltip placement="bottom" content={"Download XML"}>
-                            <Button rounded flat color="secondary" icon={<BsDownload size={19} />} onPress={downloadXML} auto />
-                        </Tooltip>
+
                     </Navbar.Brand>
 
 
 
                     <Navbar.Content activeColor={"secondary"} hideIn="xs" variant="highlight-rounded">
 
+                        <Tooltip placement="bottom" content={"Download XML"}>
+                            <Button rounded flat color="error" icon={<BsDownload size={19} />} onPress={downloadXML} auto />
+                        </Tooltip>
+
+                        <Spacer x={0.5} />
 
                         {graphType == "2d_rin"
                             ?
@@ -617,15 +623,8 @@ export default function Rin2D() {
                         />
                     }
                 </div>
-
-
-
             </div>
-
-
-
         </>
     );
-
 };
 

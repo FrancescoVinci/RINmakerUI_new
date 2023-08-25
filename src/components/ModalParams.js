@@ -21,7 +21,7 @@ export default function ModalParams(props) {
                         }}
                         
                     >
-                        Log & Parameters
+                        Program Log
                     </Text>
                     
                 </Modal.Title>

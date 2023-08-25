@@ -38,7 +38,7 @@ export default function Home() {
 
   const [loading, setLoading] = useState(false);
 
-  const [logContent, setLogContent] = useState("")
+  const [logContent, setLogContent] = useState("");
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -651,10 +651,10 @@ export default function Home() {
 
         <Grid.Container gap={2}>
           <Grid>
-            <Badge enableShadow disableOutline color="error">© Ca' Foscari University of Venice</Badge>
+            <Badge enableShadow disableOutline color="error"><a style={{ textDecoration: 'none', color: "white" }} href="https://www.unive.it/" target="_blank">© Ca' Foscari University of Venice</a></Badge>
           </Grid>
           <Grid>
-            <Badge enableShadow disableOutline color="success"><BsFillTagFill />&nbsp;v0.1.3</Badge>
+            <Badge enableShadow disableOutline color="success"><BsFillTagFill />&nbsp;v1.0.1</Badge>
           </Grid>
           <Grid>
             <Badge enableShadow disableOutline css={{ cursor: "pointer" }} color="secondary"><BsGithub /><a style={{ textDecoration: 'none', color: "white" }} href="https://github.com/RINmaker" target="_blank">&nbsp;RINmaker</a></Badge>
@@ -700,7 +700,7 @@ export default function Home() {
               <Col className="d-flex justify-content-center text-center">
                 <Stack direction="horizontal" gap={3}>
                   <BsListCheck />
-                  <h2>Option</h2>
+                  <h2>Options</h2>
                 </Stack>
               </Col>
             </Row>
@@ -986,7 +986,7 @@ export default function Home() {
               <Col className="d-flex justify-content-center text-center" sm={4}>
                 <Grid>
                   <Button name="2d_rin" shadow onPress={onSubmitButtons} type="submit" color="secondary" auto>
-                    2D RIN
+                    2D {rinSwitch ? "RIN" : "CMAP"}
                   </Button>
                 </Grid>
               </Col>
@@ -994,7 +994,7 @@ export default function Home() {
               <Col className="d-flex justify-content-center text-center" sm={4}>
                 <Grid>
                   <Button name="3d_rin" shadow onPress={onSubmitButtons} type="submit" color="secondary" auto>
-                    3D RIN
+                    3D {rinSwitch ? "RIN" : "CMAP"}
                   </Button>
                 </Grid>
               </Col>
