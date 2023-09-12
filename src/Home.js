@@ -1,6 +1,6 @@
 import { Button, Badge, Grid, Spacer, Progress } from "@nextui-org/react";
-import { BsListCheck, BsFillTagFill, BsKeyboard, BsGithub } from 'react-icons/bs';
-import { Card, Col, Row, Stack, Container, Form } from "react-bootstrap";
+import { BsListCheck, BsFillTagFill, BsKeyboard, BsGithub, BsInfoLg } from 'react-icons/bs';
+import { Card, Col, Row, Stack, Container, Form, Tooltip, OverlayTrigger, Button as BButton, Popover } from "react-bootstrap";
 import { useState, useLayoutEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate, useLocation } from "react-router-dom";
@@ -629,6 +629,20 @@ export default function Home() {
     }
   }
 
+  const popover = (
+    <Popover id="popover-basic">
+      <Popover.Header as="h3">Policy</Popover.Header>
+      <Popover.Body>
+        Affects how bonds appear in the output RIN. Mind that hydrophobic bonds are treated in a special way.
+        <ul>
+          <li><b>ALL</b>: all bonds.</li>
+          <li><b>ONE</b>: only the least energetic bond per pair of amminoacid excluding hydrophic bonds. An hydrophobic bond in then added separately.</li>
+          <li><b>MULTIPLE</b>: one bond per each type, including the hydrophobic.</li>
+        </ul>
+        Default: <b>ALL</b>.
+      </Popover.Body>
+    </Popover>
+  );
 
   return (
     <>
@@ -654,7 +668,7 @@ export default function Home() {
             <Badge enableShadow disableOutline color="error"><a style={{ textDecoration: 'none', color: "white" }} href="https://www.unive.it/" target="_blank">© Ca' Foscari University of Venice</a></Badge>
           </Grid>
           <Grid>
-            <Badge enableShadow disableOutline color="success"><BsFillTagFill />&nbsp;v1.0.1</Badge>
+            <Badge enableShadow disableOutline color="success"><BsFillTagFill />&nbsp;v1.0.2</Badge>
           </Grid>
           <Grid>
             <Badge enableShadow disableOutline css={{ cursor: "pointer" }} color="secondary"><BsGithub /><a style={{ textDecoration: 'none', color: "white" }} href="https://github.com/RINmaker" target="_blank">&nbsp;RINmaker</a></Badge>
@@ -796,8 +810,9 @@ export default function Home() {
                   <option value="one">one</option>
                 </Form.Select>
                 <Form.Text muted>
-                  Affects which edges are kept per pair of aminoacids.
-                  Default: all
+                  <OverlayTrigger trigger="click" placement="right" overlay={popover}>
+                    <BButton variant="light"><BsInfoLg /></BButton>
+                  </OverlayTrigger>
                 </Form.Text>
               </Col>
               <Col sm={3}>

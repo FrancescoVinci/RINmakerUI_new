@@ -42,9 +42,9 @@ export default function About() {
                         <hr />
                         <br />
                         <div className="text-center">
-                            <p><b>RINmaker paper: </b> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque in tincidunt metus.</p>
-                            <p><i>Name Lastname, Name Lastname, Name Lastname, Name Lastname, Name Lastname, Name Lastname</i></p>
-                            <AiOutlineLink />
+                            <p><b>RINmaker paper: </b> Rinmaker: a fast, versatile and reliable tool to determine residue interaction networks in proteins</p>
+                            <p><i>roteins Alvise Spanò, Lorenzo Fanton, Davide Pizzolato, Jacopo Moi, Francesco Vinci, Alberto Pesce, Cedrix J. Dongmo Foumthuim, Achille Giacometti and Marta Simeoni</i></p>
+                            <a href="https://rdcu.be/dlTEC"><AiOutlineLink /></a>
                         </div>
 
 

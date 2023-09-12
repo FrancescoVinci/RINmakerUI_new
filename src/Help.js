@@ -4,6 +4,7 @@ import { Table, Card, Stack, Container } from "react-bootstrap";
 import { BsFillTagFill } from 'react-icons/bs';
 import { useLocation } from "react-router-dom";
 import { useLayoutEffect } from "react";
+import Accordion from 'react-bootstrap/Accordion';
 
 
 export default function Help() {
@@ -12,7 +13,7 @@ export default function Help() {
     useLayoutEffect(() => {
         window.scrollTo(0, 0);
     }, [location.pathname]);
-    
+
     return (
         <>
 
@@ -41,7 +42,7 @@ export default function Help() {
                             >
                                 RINmaker
                             </Text>
-                            <Badge enableShadow disableOutline color="success"><BsFillTagFill />&nbsp;v0.1.3</Badge>
+                            <Badge enableShadow disableOutline color="success"><BsFillTagFill />&nbsp;v1.0.2</Badge>
                         </Stack>
 
                         <hr />
@@ -115,7 +116,22 @@ export default function Help() {
                                 <tr>
                                     <td><p className="code" ><b>--policy</b></p></td>
                                     <td>ENUM:&#123;all,multiple,one&#125;=all</td>
-                                    <td>Affects which edges are kept per pair of aminoacids</td>
+                                    <td>
+                                        <Accordion >
+                                            <Accordion.Item eventKey="0">
+                                                <Accordion.Header><BsInfoLg/></Accordion.Header>
+                                                <Accordion.Body>
+                                                    Affects how bonds appear in the output RIN. Mind that hydrophobic bonds are treated in a special way.
+                                                    <ul>
+                                                        <li><b>ALL</b>: all bonds.</li>
+                                                        <li><b>ONE</b>: only the least energetic bond per pair of amminoacid excluding hydrophic bonds. An hydrophobic bond in then added separately.</li>
+                                                        <li><b>MULTIPLE</b>: one bond per each type, including the hydrophobic.</li>
+                                                    </ul>
+                                                    Default: <b>ALL</b>.
+                                                </Accordion.Body>
+                                            </Accordion.Item>
+                                        </Accordion>
+                                    </td>
 
                                 </tr>
                                 <tr>
